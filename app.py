@@ -225,6 +225,20 @@ def profile_sidebar():
     st.sidebar.write("Current profile:", profile["name"])
 
 
+def try_add_song(song: Song, all_songs: list) -> str:
+    """Check for duplicates and add song to list. Returns 'duplicate' or 'added'."""
+    normalized = normalize_song(song)
+    duplicate = any(
+        s.get("title", "").lower() == normalized["title"].lower()
+        and s.get("artist", "").lower() == normalized["artist"].lower()
+        for s in all_songs
+    )
+    if duplicate:
+        return "duplicate"
+    all_songs.append(normalized)
+    return "added"
+
+
 def add_song_sidebar():
     """Render the Add Song controls in the sidebar."""
     st.sidebar.header("Add a song")
@@ -250,18 +264,11 @@ def add_song_sidebar():
             "tags": tags,
         }
         if title and artist:
-            normalized = normalize_song(song)
             all_songs = st.session_state.songs[:]
-            # Check for duplicate by matching title and artist (case-insensitive)
-            duplicate = any(
-                s.get("title", "").lower() == normalized["title"].lower()
-                and s.get("artist", "").lower() == normalized["artist"].lower()
-                for s in all_songs
-            )
-            if duplicate:
+            result = try_add_song(song, all_songs)
+            if result == "duplicate":
                 st.sidebar.warning(f'"{title}" by {artist} is already in the playlist.')
             else:
-                all_songs.append(normalized)
                 st.session_state.songs = all_songs
                 st.sidebar.success(f'Added "{title}" by {artist}.')
         else:
