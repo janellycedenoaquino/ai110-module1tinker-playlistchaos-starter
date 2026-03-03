@@ -213,8 +213,8 @@ def profile_sidebar():
     options = ["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"]
     profile["favorite_genre"] = st.sidebar.selectbox(
         "Favorite genre",
-        options=["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"],
-        index= options.index(profile.get("favorite_genre", "rock")),
+        options=options,
+        index=options.index(profile.get("favorite_genre", "rock")),
     )
 
     profile["include_mixed"] = st.sidebar.checkbox(
