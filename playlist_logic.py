@@ -102,7 +102,8 @@ def merge_playlists(a: PlaylistMap, b: PlaylistMap) -> PlaylistMap:
     """Merge two playlist maps into a new map."""
     merged: PlaylistMap = {}
     for key in set(list(a.keys()) + list(b.keys())):
-        merged[key] = a.get(key, [])
+        # Copy the list so we don't mutate the original playlist in a
+        merged[key] = list(a.get(key, []))
         merged[key].extend(b.get(key, []))
     return merged
 
@@ -185,13 +186,16 @@ def lucky_pick(
     elif mode == "chill":
         songs = playlists.get("Chill", [])
     else:
-        songs = playlists.get("Hype", []) + playlists.get("Chill", [])
+        songs = playlists.get("Hype", []) + playlists.get("Chill", [])+ playlists.get("Mixed", [])
 
     return random_choice_or_none(songs)
 
 
 def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
     """Return a random song or None."""
+    if not songs:
+        return None
+    
     import random
 
     return random.choice(songs)

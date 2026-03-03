@@ -196,24 +196,25 @@ def profile_sidebar():
 
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        profile["hype_min_energy"] = st.sidebar.slider(
+        profile["hype_min_energy"] = st.slider(
             "Hype min energy",
             min_value=1,
             max_value=10,
             value=int(profile.get("hype_min_energy", 7)),
         )
     with col2:
-        profile["chill_max_energy"] = st.sidebar.slider(
+        profile["chill_max_energy"] = st.slider(
             "Chill max energy",
             min_value=1,
             max_value=10,
             value=int(profile.get("chill_max_energy", 3)),
         )
 
+    options = ["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"]
     profile["favorite_genre"] = st.sidebar.selectbox(
         "Favorite genre",
         options=["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"],
-        index=0,
+        index= options.index(profile.get("favorite_genre", "rock")),
     )
 
     profile["include_mixed"] = st.sidebar.checkbox(
@@ -263,6 +264,8 @@ def add_song_sidebar():
                 all_songs.append(normalized)
                 st.session_state.songs = all_songs
                 st.sidebar.success(f'Added "{title}" by {artist}.')
+        else:
+            st.sidebar.warning("Please enter both a title and an artist.")
 
 
 def playlist_tabs(playlists):
