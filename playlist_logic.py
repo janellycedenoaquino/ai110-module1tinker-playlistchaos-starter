@@ -16,7 +16,8 @@ def normalize_title(title: str) -> str:
     """Normalize a song title for comparisons."""
     if not isinstance(title, str):
         return ""
-    return title.strip()
+    # Lowercase so keyword matching in classify_song is case-insensitive
+    return title.strip().lower()
 
 
 def normalize_artist(artist: str) -> str:
@@ -61,7 +62,6 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     """Return a mood label given a song and user profile."""
     energy = song.get("energy", 0)
     genre = song.get("genre", "")
-    title = song.get("title", "")
 
     hype_min_energy = profile.get("hype_min_energy", 7)
     chill_max_energy = profile.get("chill_max_energy", 3)
@@ -71,7 +71,8 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     chill_keywords = ["lofi", "ambient", "sleep"]
 
     is_hype_keyword = any(k in genre for k in hype_keywords)
-    is_chill_keyword = any(k in title for k in chill_keywords)
+    # Fixed: check genre (not title) to match how is_hype_keyword works
+    is_chill_keyword = any(k in genre for k in chill_keywords)
 
     if genre == favorite_genre or energy >= hype_min_energy or is_hype_keyword:
         return "Hype"
